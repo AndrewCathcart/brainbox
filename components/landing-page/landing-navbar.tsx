@@ -2,14 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
-import { Montserrat } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-
-const font = Montserrat({
-  weight: "600",
-  subsets: ["latin"],
-});
 
 export default function LandingNavbar() {
   const { isSignedIn } = useAuth();
