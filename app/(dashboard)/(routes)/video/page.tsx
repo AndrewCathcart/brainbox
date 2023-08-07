@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useProModal } from "@/hooks/use-pro-modal";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios, { isAxiosError } from "axios";
 import { Video } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -34,12 +33,16 @@ export default function VideoPage() {
     try {
       setVideo(undefined);
 
-      const res = await axios.post("/api/video", values);
+      const res = await fetch("/api/video", {
+        method: "POST",
+        body: JSON.stringify(values),
+      });
+      const data = await res.json();
 
-      setVideo(res.data[0]);
+      setVideo(data[0]);
       form.reset();
-    } catch (error) {
-      if (isAxiosError(error) && error?.response?.status === 403) {
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
         return proModal.onOpen();
       }
       toast({
@@ -77,7 +80,7 @@ export default function VideoPage() {
                       <Input
                         className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
                         disabled={isLoading}
-                        placeholder="Guitar solo only using the triangle"
+                        placeholder="Fish swimming in a coral reef."
                         {...field}
                       />
                     </FormControl>

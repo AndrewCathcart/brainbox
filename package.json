@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate --data-proxy"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.23.2",
@@ -25,7 +25,6 @@
     "@types/react": "18.2.18",
     "@types/react-dom": "18.2.7",
     "autoprefixer": "10.4.14",
-    "axios": "^1.4.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "crisp-sdk-web": "^1.0.20",

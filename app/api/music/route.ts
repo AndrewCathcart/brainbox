@@ -4,6 +4,8 @@ import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import Replicate from "replicate";
 
+export const runtime = "edge";
+
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_KEY!,
 });

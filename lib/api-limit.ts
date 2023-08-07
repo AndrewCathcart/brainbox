@@ -6,7 +6,7 @@ export const increaseApiLimit = async () => {
   const { userId } = auth();
   if (!userId) return;
 
-  const userApiLimit = await prismadb.userApiLimit.upsert({
+  await prismadb.userApiLimit.upsert({
     where: {
       userId,
     },

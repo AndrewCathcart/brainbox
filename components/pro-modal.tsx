@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/dialog";
 import { useProModal } from "@/hooks/use-pro-modal";
 import { cn } from "@/lib/utils";
-import axios from "axios";
 import {
   Check,
   Code2,
@@ -67,8 +66,9 @@ export const ProModal = () => {
   const onSubscribe = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("/api/stripe");
-      window.location.href = res.data.url;
+      const res = await fetch("/api/stripe");
+      const data = await res.json();
+      window.location.href = data.url;
     } catch (error) {
       console.log("[STRIPE_CLIENT_ERROR]", error);
       toast({

@@ -17,7 +17,6 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { useProModal } from "@/hooks/use-pro-modal";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios, { isAxiosError } from "axios";
 import { Download, Image as ImageIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -46,13 +45,18 @@ export default function ImagePage() {
     try {
       setImages([]);
 
-      const res = await axios.post("/api/image", values);
-      const urls = res.data.map((image: { url: string }) => image.url);
+      const res = await fetch("/api/image", {
+        method: "POST",
+        body: JSON.stringify(values),
+      });
+      const data = await res.json();
+
+      const urls = data.map((image: { url: string }) => image.url);
       setImages(urls);
 
       form.reset();
-    } catch (error) {
-      if (isAxiosError(error) && error?.response?.status === 403) {
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
         return proModal.onOpen();
       }
       toast({

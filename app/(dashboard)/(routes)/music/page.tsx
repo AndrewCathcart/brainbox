@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useProModal } from "@/hooks/use-pro-modal";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios, { isAxiosError } from "axios";
 import { Music } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -34,12 +33,16 @@ export default function MusicPage() {
     try {
       setMusic(undefined);
 
-      const res = await axios.post("/api/music", values);
+      const res = await fetch("/api/music", {
+        method: "POST",
+        body: JSON.stringify(values),
+      });
+      const data = await res.json();
 
-      setMusic(res.data.audio);
+      setMusic(data.audio);
       form.reset();
-    } catch (error) {
-      if (isAxiosError(error) && error?.response?.status === 403) {
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
         return proModal.onOpen();
       }
       toast({

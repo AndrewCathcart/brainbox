@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import axios from "axios";
 import { Zap } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "./ui/use-toast";
@@ -19,8 +18,10 @@ export default function SubscriptionButton({
   const handleClick = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("/api/stripe");
-      window.location.href = res.data.url;
+      const res = await fetch("/api/stripe");
+      const data = await res.json();
+
+      window.location.href = data?.url;
     } catch (error) {
       console.log("[BILLING_ERROR]", error);
       toast({

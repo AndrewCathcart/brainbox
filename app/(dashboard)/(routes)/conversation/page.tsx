@@ -12,10 +12,9 @@ import UserAvatar from "@/components/user-avatar";
 import { useProModal } from "@/hooks/use-pro-modal";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios, { isAxiosError } from "axios";
 import { MessageSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { ChatCompletionRequestMessage } from "openai";
+import type { ChatCompletionRequestMessage } from "openai";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -42,14 +41,18 @@ export default function ConversationPage() {
       };
       const newMessages = [...messages, latestMessage];
 
-      const res = await axios.post("/api/conversation", {
-        messages: newMessages,
+      const res = await fetch("/api/conversation", {
+        method: "POST",
+        body: JSON.stringify({
+          messages: newMessages,
+        }),
       });
+      const data = await res.json();
 
-      setMessages((current) => [...current, latestMessage, res.data]);
+      setMessages((current) => [...current, latestMessage, data]);
       form.reset();
-    } catch (error) {
-      if (isAxiosError(error) && error?.response?.status === 403) {
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
         return proModal.onOpen();
       }
       toast({
