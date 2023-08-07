@@ -1,7 +1,9 @@
 import { checkApiLimit, increaseApiLimit } from "@/lib/api-limit";
+import openai from "@/lib/openai";
 import { checkSubscription } from "@/lib/subscription";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
+import { ResponseTypes } from "openai-edge";
 
 export const runtime = "edge";
 
@@ -30,21 +32,13 @@ export async function POST(req: Request) {
       return new NextResponse("Free trial has expired.", { status: 403 });
     }
 
-    // api clients don't seem to work in edge funcs, make our own using fetch
-    const res = await fetch("https://api.openai.com/v1/images/generations", {
-      method: "POST",
-      body: JSON.stringify({
-        prompt,
-        n: parseInt(amount, 10),
-        size: resolution,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      },
+    const res = await openai.createImage({
+      prompt,
+      n: parseInt(amount, 10),
+      size: resolution,
     });
-    const data = await res.json();
+
+    const data = (await res.json()) as ResponseTypes["createImage"];
 
     if (!isPro) {
       await increaseApiLimit();

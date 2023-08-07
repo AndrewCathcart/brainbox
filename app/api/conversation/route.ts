@@ -1,7 +1,9 @@
 import { checkApiLimit, increaseApiLimit } from "@/lib/api-limit";
+import openai from "@/lib/openai";
 import { checkSubscription } from "@/lib/subscription";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
+import { ResponseTypes } from "openai-edge";
 
 export const runtime = "edge";
 
@@ -24,26 +26,20 @@ export async function POST(req: Request) {
       return new NextResponse("Free trial has expired.", { status: 403 });
     }
 
-    // api clients don't seem to work in edge funcs, make our own using fetch
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      body: JSON.stringify({
-        model: "gpt-3.5-turbo",
-        messages,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      },
+    const res = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages,
     });
-    const data = await res.json();
+
+    const data = (await res.json()) as ResponseTypes["createChatCompletion"];
+
+    console.log(data);
 
     if (!isPro) {
       await increaseApiLimit();
     }
 
-    return NextResponse.json(data["choices"][0].message);
+    return NextResponse.json(data.choices[0].message);
   } catch (error) {
     console.log("[CONVERSATION_ERROR]", error);
     return new NextResponse("Internal error", { status: 500 });
