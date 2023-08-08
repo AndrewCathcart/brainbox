@@ -1,8 +1,6 @@
 import { auth } from "@clerk/nextjs";
 import prismadb from "./prismadb";
 
-const DAY_IN_MS = 86_400_000;
-
 export const checkSubscription = async () => {
   const { userId } = auth();
   if (!userId) return false;
@@ -23,7 +21,7 @@ export const checkSubscription = async () => {
 
   const isValid =
     subscription.stripePriceId &&
-    subscription.stripeCurrentPeriodEnd?.getTime()! + DAY_IN_MS > Date.now();
+    subscription.stripeCurrentPeriodEnd?.getTime()! > Date.now();
 
   return !!isValid;
 };
