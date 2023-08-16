@@ -1,8 +1,8 @@
 # brainbox
 
-https://brainbox-ai.vercel.app/
-
 An AI SaaS web app.
+
+Practicing Next App Router / shadcn/ui and getting to grips with Clerk / PlanetScale 
 
 ## Tech
 - [Next.js App Router](https://nextjs.org/docs/app)
